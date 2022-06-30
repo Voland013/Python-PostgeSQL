@@ -1,4 +1,4 @@
-# Python-PostgeSQL
+# Python-PostgreSQL
 Python 3 access to PostgreSQL server
 ## TODO
 1. HTML form to generate authorization file
