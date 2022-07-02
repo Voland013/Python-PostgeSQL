@@ -62,6 +62,39 @@ if 'QUERY_STRING' in environ and environ['QUERY_STRING'] != '':
     except OSError:
       print('could not open ', filename, ' for writing')
       print('suggest touching and setting permissions to universal write')
+    
+    importError = False
+    try:
+      import psycopg2
+    except ImportError:
+      print('could not import psycopg2')
+      importError = True
+    
+    connectError = False
+    if not importError:
+      try:
+        connection = psycopg2.connect(dbname=db, user=username,
+			password=password)
+        print('<br>connected to database')
+      except psyscopg2.Error:
+        print('could not connect to database')
+        connectError = True
+    
+    if not connectError:
+      cursor = connection.cursor()
+      query = "select tablename from pg_catalog.pg_tables where tableowner ="
+      query += " '" + username + "'"
+      cursor.execute(query)
+      if cursor.rowcount == 0:
+        print('<br>no tables')
+      else:
+        print('<br>Tables:')
+        print('      <ul>')
+        for record in cursor:
+          print('        <li>')
+          print(record[0])
+        print('       </ul>')
+
   print('     </p>')
 
 print('    <form action="generate-authfile.py">')
